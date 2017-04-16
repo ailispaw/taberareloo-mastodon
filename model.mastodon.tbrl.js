@@ -49,6 +49,7 @@
     createStatus : function (ps) {
       var self     = this;
       var template = TBRL.Config['entry']['twitter_template'];
+      var spoiler  = '';
       var status   = '';
 
       if (ps.type === 'photo') {
@@ -56,12 +57,20 @@
         ps.itemUrl = ps.pageUrl;
       }
       if (!template) {
-        status = joinText([
-          ps.description,
-          (ps.body) ? '"' + ps.body + '"' : '',
-          ps.item,
-          ps.itemUrl
-        ], ' ');
+        switch (ps.type) {
+          case 'regular':
+            spoiler = ps.item;
+            status  = ps.description;
+            break;
+          default:
+            status = joinText([
+              ps.description,
+              (ps.body) ? '"' + ps.body + '"' : '',
+              ps.item,
+              ps.itemUrl
+            ], ' ');
+            break;
+        }
       } else {
         status = templateExtract(template, {
           description   : ps.description,
@@ -74,18 +83,27 @@
           link_q        : (ps.itemUrl) ? '"' + ps.itemUrl + '"' : null
         });
       }
-      return status;
+      return {
+        spoiler : spoiler,
+        status  : status
+      };
     },
 
     post : function (ps) {
       var self = this;
 
+      var status = self.createStatus(ps);
+
       var content = update({}, self.defaults);
       update(content, {
         in_reply_to_id : null,
         media_ids      : [],
-        status         : self.createStatus(ps)
+        status         : status.status
       });
+
+      if (!content.spoiler_text) {
+        content.spoiler_text = status.spoiler;
+      }
 
       if (RegExp("(^|\\s)#?NSFW(\\s|$)", "g").test(content.spoiler_text + content.status)) {
         content.sensitive = true;
