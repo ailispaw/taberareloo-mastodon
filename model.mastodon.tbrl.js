@@ -47,9 +47,14 @@
         ps.itemUrl = ps.pageUrl;
       }
       if (!template) {
-        status = joinText([ps.description, (ps.body)? '"' + ps.body + '"' : '', ps.item, ps.itemUrl], ' ');
+        status = joinText([
+          ps.description,
+          (ps.body) ? '"' + ps.body + '"' : '',
+          ps.item,
+          ps.itemUrl
+        ], ' ');
       } else {
-        status = templateExtract(template,{
+        status = templateExtract(template, {
           description   : ps.description,
           description_q : (ps.description) ? '"' + ps.description + '"' : null,
           body          : ps.body,
