@@ -29,6 +29,9 @@
 
       return request(self.LINK).then(function (res) {
         var access_token = res.responseText.extract(/"access_token":"([^"]+?)"/);
+        if (!access_token) {
+          throw new Error(chrome.i18n.getMessage('error_notLoggedin', self.name));
+        }
         var default_privacy = res.responseText.extract(/"default_privacy":"([^"]+?)"/);
         return {
           token   : access_token,
