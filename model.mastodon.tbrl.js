@@ -155,11 +155,13 @@
     Models.register(model);
   }
 
+/*
   register('Local', 'http://localhost:3000', {
     sensitive    : false, // or true to hide an image
     spoiler_text : "",    // any text before "SHOW MORE"
     visibility   : ""     // "public", "unlisted", "private" or "direct", otherwise your default
   });
+*/
   register('Octodon', 'https://octodon.social');
   register('MSTDN.JP', 'https://mstdn.jp');
 })();
