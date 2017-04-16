@@ -20,6 +20,12 @@
     POST_URL  : BASE_URL + '/api/v1/statuses',
     MEDIA_URL : BASE_URL + '/api/v1/media',
 
+    defaults : {
+      sensitive    : false, // or true to hide an image
+      spoiler_text : "",    // any text before "SHOW MORE"
+      visibility   : ""     // "public", "unlisted", "private" or "direct", otherwise your default
+    },
+
     check : function (ps) {
       return /regular|photo|quote|link|video/.test(ps.type);
     },
@@ -73,18 +79,15 @@
 
     post : function (ps) {
       var self = this;
-      var promise;
 
-      content = {
+      var content = update({}, self.defaults);
+      update(content, {
         in_reply_to_id : null,
         media_ids      : [],
-        sensitive      : false,
-        spoiler_text   : "", // "Tooted by Taberareloo"
-        status         : self.createStatus(ps),
-        visibility     : "public" // "unlisted", "private" or "direct"
-      };
+        status         : self.createStatus(ps)
+      });
 
-      promise = Promise.resolve(content);
+      var promise = Promise.resolve(content);
       if (ps.type === 'photo') {
         promise = (
           ps.file ? Promise.resolve(ps.file) : download(ps.itemUrl).then(function (entry) {
@@ -100,7 +103,9 @@
 
       return promise.then(function (content) {
         return self.getAccessToken().then(function (token) {
-          content.visibility = token.privacy;
+          if (!content.visibility) {
+            content.visibility = token.privacy;
+          }
           return request(self.POST_URL, {
             method       : 'POST',
             responseType : 'json',
@@ -134,7 +139,7 @@
     }
   };
 
-  function register (name, base_url) {
+  function register (name, base_url, defaults) {
     var model = update({}, Mastodon);
     model.name      = 'Mastodon - ' + name;
     model.typeName  = 'Mastodon';
@@ -143,10 +148,18 @@
     model.LOGIN_URL = base_url + '/auth/sign_in';
     model.POST_URL  = base_url + '/api/v1/statuses';
     model.MEDIA_URL = base_url + '/api/v1/media';
+    model.defaults  = update({}, model.defaults);
+    if (defaults) {
+      update(model.defaults, defaults);
+    }
     Models.register(model);
   }
 
-  register('Local', 'http://localhost:3000');
+  register('Local', 'http://localhost:3000', {
+    sensitive    : false, // or true to hide an image
+    spoiler_text : "",    // any text before "SHOW MORE"
+    visibility   : ""     // "public", "unlisted", "private" or "direct", otherwise your default
+  });
   register('Octodon', 'https://octodon.social');
   register('MSTDN.JP', 'https://mstdn.jp');
 })();
