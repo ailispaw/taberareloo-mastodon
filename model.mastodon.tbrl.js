@@ -87,6 +87,10 @@
         status         : self.createStatus(ps)
       });
 
+      if (RegExp("(^|\\s)#?NSFW(\\s|$)", "g").test(content.spoiler_text + content.status)) {
+        content.sensitive = true;
+      }
+
       var promise = Promise.resolve(content);
       if (ps.type === 'photo') {
         promise = (
