@@ -4,7 +4,7 @@
 // , "description" : "Post to a Mastodon instance"
 // , "include"     : ["background"]
 // , "version"     : "0.1.0"
-// , "downloadURL" : "https://raw.githubusercontent.com/ailispaw/mastodon-barge/master/model.mastodon.tbrl.js"
+// , "downloadURL" : "https://raw.githubusercontent.com/ailispaw/taberareloo-mastodon/master/model.mastodon.tbrl.js"
 // }
 // ==/Taberareloo==
 
