@@ -28,8 +28,12 @@
       var self = this;
 
       return request(self.LINK).then(function (res) {
-        var token = res.responseText.extract(/"access_token":"([^"]+?)"/);
-        return {token : token};
+        var access_token = res.responseText.extract(/"access_token":"([^"]+?)"/);
+        var default_privacy = res.responseText.extract(/"default_privacy":"([^"]+?)"/);
+        return {
+          token   : access_token,
+          privacy : default_privacy
+        };
       });
     },
 
@@ -88,6 +92,7 @@
 
       return promise.then(function (content) {
         return self.getAccessToken().then(function (token) {
+          content.visibility = token.privacy;
           return request(self.POST_URL, {
             method       : 'POST',
             responseType : 'json',
