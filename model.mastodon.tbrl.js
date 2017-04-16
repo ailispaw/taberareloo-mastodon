@@ -67,9 +67,9 @@
         in_reply_to_id : null,
         media_ids      : [],
         sensitive      : false,
-        spoiler_text   : "",
+        spoiler_text   : "", // "Tooted by Taberareloo"
         status         : self.createStatus(ps),
-        visibility     : "public"
+        visibility     : "public" // "unlisted", "private" or "direct"
       };
 
       promise = Promise.resolve(content);
