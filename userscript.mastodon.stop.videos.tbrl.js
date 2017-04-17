@@ -4,7 +4,7 @@
 // , "description" : "Stop all videos on a Mastodon dashboard"
 // , "include"     : ["content"]
 // , "match"       : ["*://*/*"]
-// , "version"     : "0.1.0"
+// , "version"     : "0.2.0"
 // , "downloadURL" : "https://raw.githubusercontent.com/ailispaw/taberareloo-mastodon/master/userscript.mastodon.stop.videos.tbrl.js"
 // }
 // ==/Taberareloo==
@@ -23,7 +23,9 @@
     var videos = document.getElementsByTagName('video');
     for (var i = 0 ; i < videos.length ; i++) {
       if (!videos[i].getAttribute('controls')) {
-        videos[i].pause();
+        if (!$X('ancestor-or-self::div[contains(concat(" ",@class," ")," media-modal ")]', videos[i])[0]) {
+          videos[i].pause();
+        }
         videos[i].loop = false;
         videos[i].setAttribute('controls', 'controls');
       }
