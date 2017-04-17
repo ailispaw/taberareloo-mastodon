@@ -186,4 +186,7 @@
 */
   register('Octodon', 'https://octodon.social');
   register('MSTDN.JP', 'https://mstdn.jp');
+  register('Pawoo', 'https://pawoo.net', {
+    sensitive : true
+  });
 })();
