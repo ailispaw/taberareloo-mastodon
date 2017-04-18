@@ -14,27 +14,44 @@
   {
     name : 'Quote - Mastodon',
 
-    check : function (ctx) {
+    saved_node : null,
+
+    isMastodon : function (ctx) {
       var powered_by = $X('.//span[contains(concat(" ",@class," ")," powered-by ")]')[0];
-      return (powered_by && (powered_by.textContent.trim() == "powered by Mastodon"));
+      return !!(powered_by && (powered_by.textContent.trim() === "powered by Mastodon"));
+    },
+
+    check : function (ctx) {
+      var node = ctx.target;
+      this.saved_node =
+        $X('./ancestor-or-self::div[contains(concat(" ",@class," ")," entry ")]', node)[0];
+      return (this.isMastodon(ctx) && !!this.saved_node);
     },
 
     extract : function (ctx) {
-      var toot     = $X('.//div[contains(concat(" ",@class," ")," entry-center ")]')[0];
-      var link     = toot.querySelector('a.detailed-status__datetime.u-url');
-      var username = toot.querySelector('.display-name .p-name').textContent;
-      var image    = toot.querySelector('.detailed-status__attachments .u-photo');
+      var toot     = this.saved_node;
+      var link     = toot.querySelector('a.u-url.u-uid');
+      var image    = toot.querySelector('a.u-photo');
+      var username = toot.querySelector('.display-name strong').textContent;
+/*
+      var useraddr = toot.querySelector('.display-name span').textContent;
+      var domain   = link.href.extract(/https?:\/\/([^\/]+)\//);
+      if (useraddr.indexOf(domain) === -1) {
+        useraddr = useraddr + '@' + domain;
+      }
+*/
 
       var selection;
       if (ctx.selection) {
         selection = ctx.selection;
       } else {
-        var elm = toot.querySelector('.status__content p');
+        var elm = toot.querySelector('.status__content .e-content p') ||
+          toot.querySelector('.status__content .e-content');
         var cloneElm = elm.cloneNode(true);
         selection = createFlavoredString(cloneElm);
       }
 
-      ctx.title = ctx.title + ' / ' + username;
+      ctx.title = username; // + '<' + useraddr + '>';
       ctx.href  = link.href;
       return {
         type    : image ? 'photo' : 'quote',
@@ -52,17 +69,22 @@
 
     saved_node : null,
 
+    isMastodon : function(ctx) {
+      return !!$X('.//div[@data-react-class="Mastodon"]')[0];
+    },
+
     check : function (ctx) {
       var node = ctx.target;
       this.saved_node = $X('./ancestor-or-self::div[@class="status"]', node)[0];
-      return !!$X('.//div[@data-react-class="Mastodon"]')[0] && !!this.saved_node;
+      return (this.isMastodon(ctx) && !!this.saved_node);
     },
 
     extract : function (ctx) {
       var toot     = this.saved_node;
       var link     = toot.querySelector('a.status__relative-time');
-      var username = toot.querySelector('.display-name span').textContent;
       var image    = $X('.//a[starts-with(@style,"background: url")]', toot)[0];
+      var username = toot.querySelector('.display-name strong').textContent;
+//      var useraddr = toot.querySelector('.display-name span').textContent;
 
       var selection;
       if (ctx.selection) {
@@ -73,7 +95,7 @@
         selection = createFlavoredString(cloneElm);
       }
 
-      ctx.title = ctx.title + ' / ' + username;
+      ctx.title = username; // + '<' + useraddr + '>';
       ctx.href  = link.href;
       return {
         type    : image ? 'photo' : 'quote',
