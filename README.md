@@ -1,4 +1,4 @@
-# Mastodon Model patch for Taberareloo
+# Mastodon Patch for Taberareloo
 
 You can register your Mastodon instance as well at the end of the script and install it.
 
@@ -12,5 +12,8 @@ You can register your Mastodon instance as well at the end of the script and ins
 */
   register('Octodon', 'https://octodon.social');
   register('MSTDN.JP', 'https://mstdn.jp');
+  register('Pawoo', 'https://pawoo.net', {
+    sensitive : true
+  });
 })();
 ```
