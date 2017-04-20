@@ -68,7 +68,7 @@
               (ps.body) ? '"' + ps.body + '"' : '',
               ps.item,
               ps.itemUrl
-            ], ' ');
+            ], '\n');
             break;
         }
       } else {
