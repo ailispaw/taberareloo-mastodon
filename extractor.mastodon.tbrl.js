@@ -90,7 +90,7 @@
       if (ctx.selection) {
         selection = ctx.selection;
       } else {
-        var elm = toot.querySelector('.status__content p');
+        var elm = toot.querySelector('.status__content p') || toot.querySelector('.status__content');
         var cloneElm = elm.cloneNode(true);
         selection = createFlavoredString(cloneElm);
       }
