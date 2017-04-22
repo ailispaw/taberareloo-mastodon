@@ -144,22 +144,71 @@
     upload : function (file) {
       var self = this;
 
-      return self.getAccessToken().then(function (token) {
-        return request(self.MEDIA_URL, {
-          method       : 'POST',
-          responseType : 'json',
-          headers      : {
-            'Authorization' : 'Bearer ' + token.token
-          },
-          sendContent  : {
-            file : file
-          }
-        }).then(function (res) {
-          return res.response;
+      // Convert WebP to PNG, because Mastodon doesn't support WebP image.
+      var promise = Promise.resolve(file);
+      if (file.type === 'image/webp') {
+        promise = fileToPNGDataURL(file).then(function (pngDataURL) {
+          return createFileEntryFromBlob(base64ToBlob(pngDataURL.binary, 'image/png'), 'png')
+            .then(function (entry) {
+              return getFileFromEntry(entry);
+            });
+        });
+      }
+
+      return promise.then(function (file) {
+        return self.getAccessToken().then(function (token) {
+          return request(self.MEDIA_URL, {
+            method       : 'POST',
+            responseType : 'json',
+            headers      : {
+              'Authorization' : 'Bearer ' + token.token
+            },
+            sendContent  : {
+              file : file
+            }
+          }).then(function (res) {
+            return res.response;
+          }).catch(function (res) {;
+            var data = res.response;
+            if (data.error) {
+              throw new Error(data.error);
+            } else {
+              throw new Error('Could not upload the image');
+            }
+          });
         });
       });
     }
   };
+
+  function download(url, ext) {
+    return request(url, {
+      responseType: 'blob'
+    }).then(function (res) {
+      var mime = res.getResponseHeader('Content-Type').replace(/;.*/, '');
+      ext = getFileExtensionFromMime(mime) || ext;
+      return createFileEntryFromBlob(res.response, ext);
+    }).catch(function (res) {
+      return res;
+    });
+  }
+
+  function getFileExtensionFromMime(mime) {
+    switch (mime) {
+    case 'image/bmp':
+      return 'bmp';
+    case 'image/gif':
+      return 'gif';
+    case 'image/jpeg':
+      return 'jpg';
+    case 'image/png':
+      return 'png';
+    case 'image/webp':
+      return 'webp';
+    default:
+      return undefined;
+    }
+  }
 
   function register (name, base_url, defaults) {
     var model = update({}, Mastodon);
