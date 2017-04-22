@@ -170,7 +170,7 @@
             return res.response;
           }).catch(function (res) {;
             var data = res.response;
-            if (data.error) {
+            if (data && data.error) {
               throw new Error(data.error);
             } else {
               throw new Error('Could not upload the image');
