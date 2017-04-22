@@ -168,7 +168,7 @@
             }
           }).then(function (res) {
             return res.response;
-          }).catch(function (res) {;
+          }).catch(function (res) {
             var data = res.response;
             if (data && data.error) {
               throw new Error(data.error);
