@@ -3,7 +3,7 @@
 //   "name"        : "Mastodon Model"
 // , "description" : "Post to a Mastodon instance"
 // , "include"     : ["background"]
-// , "version"     : "0.6.0"
+// , "version"     : "0.6.1"
 // , "downloadURL" : "https://raw.githubusercontent.com/ailispaw/taberareloo-mastodon/master/model.mastodon.tbrl.js"
 // }
 // ==/Taberareloo==
