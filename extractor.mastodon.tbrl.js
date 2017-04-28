@@ -82,7 +82,8 @@
     extract : function (ctx) {
       var toot     = this.saved_node;
       var link     = toot.querySelector('a.status__relative-time');
-      var image    = $X('.//a[starts-with(@style,"background: url")]', toot)[0];
+      var image    = $X('.//a[starts-with(@style,"background: url")]', toot)[0] ||
+        $X('.//a[starts-with(@style,"background-image: url")]', toot)[0];
       var username = toot.querySelector('.display-name strong').textContent;
 //      var useraddr = toot.querySelector('.display-name span').textContent;
 
