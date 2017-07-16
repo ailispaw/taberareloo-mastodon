@@ -4,7 +4,7 @@
 // , "description" : "Extract a toot on a Mastodon instance"
 // , "include"     : ["content"]
 // , "match"       : ["*://*/*"]
-// , "version"     : "0.1.1"
+// , "version"     : "0.1.2"
 // , "downloadURL" : "https://raw.githubusercontent.com/ailispaw/taberareloo-mastodon/master/extractor.mastodon.tbrl.js"
 // }
 // ==/Taberareloo==
@@ -84,7 +84,8 @@
       var toot     = this.saved_node;
       var link     = toot.querySelector('a.status__relative-time');
       var image    = $X('.//a[starts-with(@style,"background: url")]', toot)[0] ||
-        $X('.//a[starts-with(@style,"background-image: url")]', toot)[0];
+        $X('.//a[starts-with(@style,"background-image: url")]', toot)[0] ||
+        $X('.//a[@class="media-gallery__item-thumbnail"]', toot)[0];
       var username = toot.querySelector('.display-name strong').textContent;
 //      var useraddr = toot.querySelector('.display-name span').textContent;
 
