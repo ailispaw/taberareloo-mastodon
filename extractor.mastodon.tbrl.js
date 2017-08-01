@@ -4,7 +4,7 @@
 // , "description" : "Extract a toot on a Mastodon instance"
 // , "include"     : ["content"]
 // , "match"       : ["*://*/*"]
-// , "version"     : "0.1.2"
+// , "version"     : "0.1.3"
 // , "downloadURL" : "https://raw.githubusercontent.com/ailispaw/taberareloo-mastodon/master/extractor.mastodon.tbrl.js"
 // }
 // ==/Taberareloo==
@@ -76,7 +76,8 @@
     check : function (ctx) {
       var node = ctx.target;
       this.saved_node = 
-        $X('./ancestor-or-self::div[contains(concat(" ",@class," ")," status ")]', node)[0];
+        $X('./ancestor-or-self::div[contains(concat(" ",@class," ")," status ")]', node)[0] ||
+        $X('./ancestor-or-self::article[contains(concat(" ",@class," ")," status ")]', node)[0];
       return (this.isMastodon(ctx) && !!this.saved_node);
     },
 
